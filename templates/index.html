@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fashion Recommender & Image Generator</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+    <style>
+        body { font-family: 'Poppins', sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; height: 100vh; }
+        .container { height: 100%; display: flex; flex-direction: column; }
+        .header { text-align: center; padding: 20px; background: #007bff; color: white; }
+        .layout { display: flex; flex: 1; gap: 20px; padding: 20px; }
+        .section { flex: 1; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .upload-section { background-color: #e3f2fd; }
+        .chatbot-section { background-color: #fce4ec; }
+        h1 { margin: 0; }
+        h2 { color: #555; }
+        input[type="text"], input[type="file"] { padding: 12px; border: 1px solid #ddd; border-radius: 8px; width: 100%; margin-bottom: 15px; }
+        button { padding: 12px; border: none; border-radius: 8px; color: #fff; cursor: pointer; width: 100%; font-size: 16px; }
+        .upload-section button { background-color: #1e88e5; }
+        .chatbot-section button { background-color: #d81b60; }
+        button:hover { opacity: 0.9; }
+        .recommendations { display: flex; flex-wrap: wrap; gap: 10px; }
+        .recommendations img { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; }
+        .uploaded-image img { width: 100%; border-radius: 8px; }
+        .chat-box { border: 1px solid #ddd; padding: 10px; border-radius: 8px; height: 300px; overflow-y: auto; margin-top: 15px; background-color: #f8f8f8; }
+        .chat-message { margin-bottom: 10px; }
+        .user-message { text-align: left; }
+        .bot-message { text-align: right; }
+        .message { padding: 10px; border-radius: 8px; max-width: 80%; display: inline-block; }
+        .user-message .message { background-color: #c8e6c9; }
+        .bot-message .message { background-color: #f48fb1; }
+        .response img { max-width: 100%; height: auto; border-radius: 8px; margin-top: 10px; }
+        @media (max-width: 768px) {
+            .layout { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Fashion Recommender & Image Generator</h1>
+        </div>
+        <div class="layout">
+            <!-- Image Upload Section -->
+            <div class="section upload-section">
+                <h2>Upload an Image for Fashion Recommendation</h2>
+                <form action="/recommend" method="post" enctype="multipart/form-data">
+                    <input type="file" name="file" accept="image/*" required>
+                    <button type="submit">Upload & Recommend</button>
+                </form>
+
+                {% if uploaded_image %}
+                    <h3>Uploaded Image</h3>
+                    <div class="uploaded-image">
+                        <img src="{{ url_for('static', filename='uploads/' + uploaded_image) }}" alt="Uploaded Image">
+                    </div>
+                {% endif %}
+
+                {% if recommendations %}
+                    <h3>Recommended Images</h3>
+                    <div class="recommendations">
+                        {% for img in recommendations %}
+                            <img src="{{ url_for('static', filename='images/' + img) }}" alt="Recommended Image">
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Chatbot Section -->
+            <div class="section chatbot-section">
+                <h2>Chatbot Image Generator</h2>
+                <form action="/recommend" method="post">
+                    <input type="text" name="chat_input" placeholder="Enter a description for image generation" required>
+                    <button type="submit">Generate Image</button>
+                </form>
+
+                {% if chatbot_response %}
+                    <div class="chat-box">
+                        <div class="chat-message bot-message">
+                            <div class="message">
+                                <p>{{ chatbot_response.description }}</p>
+                                <img src="{{ chatbot_response.image_url }}" alt="Generated Image">
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
